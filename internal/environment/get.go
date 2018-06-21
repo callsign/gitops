@@ -19,9 +19,9 @@ var environments = map[string]string{
 func Get() (string, error) {
 	fmt.Println("Determiniing deployment environment")
 
-	output, err := exec.Command("git", "symbolic-ref", "--short", "HEAD").Output()
+	output, err := exec.Command("git", "symbolic-ref", "--short", "HEAD").CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("Cannot read service branch: %s", err)
+		return "", fmt.Errorf("Cannot read service branch: %s", output)
 	}
 	serviceBranch := strings.Trim(string(output[:]), "\n")
 
