@@ -5,9 +5,7 @@ package environment
 import (
 	"os"
 	"fmt"
-	"os/exec"
 	"regexp"
-	"strings"
 
 	"github.com/callsign/gitops/internal/git"
 )
