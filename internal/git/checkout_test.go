@@ -22,12 +22,12 @@ func Test_Checkout(t *testing.T) {
 	}{{
 		name:          "should return an error on invalid project url",
 		projectURL:    "invalid",
-		expectedError: fmt.Errorf("Cannot clone *"),
+		expectedError: fmt.Errorf("Cannot git clone*"),
 	}, {
 		name:          "should return an error on invalid environment",
 		projectURL:    "https://github.com/githubtraining/hellogitworld.git",
 		environment:   "invalid",
-		expectedError: fmt.Errorf("Cannot checkout *"),
+		expectedError: fmt.Errorf("Cannot git checkout*"),
 	}, {
 		name:         "should checkout the project",
 		projectURL:   "https://github.com/githubtraining/hellogitworld.git",

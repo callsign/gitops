@@ -4,16 +4,19 @@ package git
 
 import (
 	"fmt"
-	"os/exec"
 )
 
 // Push the GitOps project changes
-func Push(projectName string) error {
+func Push(projectName, commitMessage string) error {
 	fmt.Println("Pushing GitOps project changes")
-	command := exec.Command("git", "push")
-	command.Dir = projectName
-	if err := command.Run(); err != nil {
-		return fmt.Errorf("Cannot push: %v", err)
+	if err := git(projectName, "add", "."); err != nil {
+		return err
+	}
+	if err := git(projectName, "commit", "-m", commitMessage); err != nil {
+		return err
+	}
+	if err := git(projectName, "push"); err != nil {
+		return err
 	}
 	return nil
 }

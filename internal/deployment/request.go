@@ -40,7 +40,8 @@ func Request(projectURL string) error {
 		return err
 	}
 
-	err = git.Push(projectName)
+	commitMessage := serviceName + "-" + serviceVersion
+	err = git.Push(projectName, commitMessage)
 	if err != nil {
 		return err
 	}

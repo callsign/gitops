@@ -17,11 +17,11 @@ func Test_Push(t *testing.T) {
 	}{{
 		name:          "should return an error on invalid project name",
 		projectName:   "invalid",
-		expectedError: fmt.Errorf("Cannot push: *"),
+		expectedError: fmt.Errorf("Cannot git add: *"),
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualError := Push(test.projectName)
+			actualError := Push(test.projectName, "message")
 			testutil.VerifyError(test.expectedError, actualError, t)
 		})
 	}

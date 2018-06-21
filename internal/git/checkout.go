@@ -14,16 +14,14 @@ func Checkout(projectURL, environment string) (string, error) {
 
 	fmt.Println("Cloning GitOps project")
 	if output, err := exec.Command("git", "clone", projectURL).CombinedOutput(); err != nil {
-		return "", fmt.Errorf("Cannot clone %s: %s", projectURL, output)
+		return "", fmt.Errorf("Cannot git clone %s: %s", projectURL, output)
 	}
 
 	projectName := removeExtension(filepath.Base(projectURL))
 
 	fmt.Printf("Checking out %s environment branch\n", environment)
-	command := exec.Command("git", "checkout", environment)
-	command.Dir = projectName
-	if err := command.Run(); err != nil {
-		return "", fmt.Errorf("Cannot checkout %s: %v", environment, err)
+	if err := git(projectName, "checkout", environment); err != nil {
+		return "", err
 	}
 
 	return projectName, nil

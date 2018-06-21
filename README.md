@@ -31,7 +31,7 @@ Features
 * Update the the application Helm *requirements.lock*
 * Copy the service configuration to the GitOps project (*environments/`<environment>`* to *configurations/`<service>`*)
 * Add a service prefix to the service configuration
-* Push the GitOps project modifications
+* Commit and push the GitOps project changes
 
 Getting Started
 ---------------
