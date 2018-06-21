@@ -21,11 +21,11 @@ Features
 * Clone the GitOps project
 * Checkout the environment branch following this mapping:
 
-| Service project branch    | GitOps project branch |
-|---------------------------|-----------------------|
-| ^develop$                 | verify                |
-| (release\|hotfix)\\/\\S+$ | staging               |
-| ^master$                  | production            |
+| Service project branch     | GitOps project branch |
+|----------------------------|-----------------------|
+| ^develop$                  | verify                |
+| ^(release\|hotfix)\\/\\S+$ | staging               |
+| ^master$                   | production            |
 
 * Update the service version in the application Helm *requirements.yaml* (using *build/packages/version* file)
 * Update the the application Helm *requirements.lock*
