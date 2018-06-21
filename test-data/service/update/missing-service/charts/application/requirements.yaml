@@ -1,0 +1,4 @@
+dependencies:
+- name: another-service
+  version: 2.0.1805200912+abcde
+  repository: file://../../another-service/charts/another-service

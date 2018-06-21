@@ -1,0 +1,5 @@
+dependencies:
+- name: service
+  repository: file://../../service/charts/service
+  version: 2.1.1805200912+abcde
+digest: sha256:2fe2cd54fd5dea50ac0f39074fc062d0eaa654e6765de012d4a82d2c394197dc

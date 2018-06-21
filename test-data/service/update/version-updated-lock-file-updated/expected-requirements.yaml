@@ -1,0 +1,9 @@
+dependencies:
+- name: service
+  version: 2.1.1805200912+abcde
+  repository: file://../../service/charts/service
+  alias: service-alias
+  condition: service.enabled
+  tags:
+  - tag-1
+  - tag-2
