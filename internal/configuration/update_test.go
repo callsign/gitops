@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"callsign.com/gitops/internal/testutil"
+	"github.com/callsign/gitops/internal/testutil"
 )
 
 func Test_Update(t *testing.T) {

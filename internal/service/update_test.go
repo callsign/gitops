@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"callsign.com/gitops/internal/directory"
-	"callsign.com/gitops/internal/testutil"
+	"github.com/callsign/gitops/internal/directory"
+	"github.com/callsign/gitops/internal/testutil"
 )
 
 func Test_Update(t *testing.T) {

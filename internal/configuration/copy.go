@@ -8,7 +8,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"callsign.com/gitops/internal/directory"
+	"github.com/callsign/gitops/internal/directory"
 )
 
 func copy(configurationPath, environment, projectName, serviceName string) error {

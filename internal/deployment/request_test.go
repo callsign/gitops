@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"callsign.com/gitops/internal/testutil"
+	"github.com/callsign/gitops/internal/testutil"
 )
 
 func Test_Push(t *testing.T) {
@@ -15,8 +15,8 @@ func Test_Push(t *testing.T) {
 		projectURL    string
 		expectedError error
 	}{{
-		name: "should return an error on invalid project URL",
-		projectURL: "invalid",
+		name:          "should return an error on invalid project URL",
+		projectURL:    "invalid",
 		expectedError: fmt.Errorf("Cannot clone *"),
 	}}
 	for _, test := range tests {

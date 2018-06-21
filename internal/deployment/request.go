@@ -5,10 +5,10 @@ package deployment
 import (
 	"path/filepath"
 
-	"callsign.com/gitops/internal/configuration"
-	"callsign.com/gitops/internal/environment"
-	"callsign.com/gitops/internal/git"
-	"callsign.com/gitops/internal/service"
+	"github.com/callsign/gitops/internal/configuration"
+	"github.com/callsign/gitops/internal/environment"
+	"github.com/callsign/gitops/internal/git"
+	"github.com/callsign/gitops/internal/service"
 )
 
 // Request a service deployment

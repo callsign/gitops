@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
-	"callsign.com/gitops/internal/configuration"
-	"callsign.com/gitops/internal/deployment"
-	"callsign.com/gitops/internal/service"
+	"github.com/callsign/gitops/internal/configuration"
+	"github.com/callsign/gitops/internal/deployment"
+	"github.com/callsign/gitops/internal/service"
 )
 
 func main() {

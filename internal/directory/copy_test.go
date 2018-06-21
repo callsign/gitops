@@ -8,7 +8,7 @@ import (
 	"path"
 	"testing"
 
-	"callsign.com/gitops/internal/testutil"
+	"github.com/callsign/gitops/internal/testutil"
 )
 
 func Test_Copy(t *testing.T) {
