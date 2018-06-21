@@ -3,10 +3,13 @@
 package environment
 
 import (
+	"os"
 	"fmt"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/callsign/gitops/internal/git"
 )
 
 var environments = map[string]string{
@@ -19,11 +22,13 @@ var environments = map[string]string{
 func Get() (string, error) {
 	fmt.Println("Determiniing deployment environment")
 
-	output, err := exec.Command("git", "symbolic-ref", "--short", "HEAD").CombinedOutput()
+	serviceBranch, err := git.Git(".", "git", "rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil {
-		return "", fmt.Errorf("Cannot read service branch: %s", output)
+		return "", fmt.Errorf("Cannot read service branch: %s", serviceBranch)
 	}
-	serviceBranch := strings.Trim(string(output[:]), "\n")
+	if serviceBranch == "HEAD" {
+		serviceBranch = os.Getenv("CI_COMMIT_REF_NAME")
+	}
 
 	for environment, serviceBranchRegexp := range environments {
 		if match, _ := regexp.MatchString(serviceBranchRegexp, serviceBranch); match {

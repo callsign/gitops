@@ -9,13 +9,13 @@ import (
 // Push the GitOps project changes
 func Push(projectName, commitMessage string) error {
 	fmt.Println("Pushing GitOps project changes")
-	if err := git(projectName, "add", "."); err != nil {
+	if _, err := Git(projectName, "add", "."); err != nil {
 		return err
 	}
-	if err := git(projectName, "commit", "-m", commitMessage); err != nil {
+	if _, err := Git(projectName, "commit", "-m", commitMessage); err != nil {
 		return err
 	}
-	if err := git(projectName, "push"); err != nil {
+	if _, err := Git(projectName, "push"); err != nil {
 		return err
 	}
 	return nil

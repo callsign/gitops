@@ -4,7 +4,6 @@ package git
 
 import (
 	"fmt"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -13,14 +12,14 @@ import (
 func Checkout(projectURL, environment string) (string, error) {
 
 	fmt.Println("Cloning GitOps project")
-	if output, err := exec.Command("git", "clone", projectURL).CombinedOutput(); err != nil {
+	if output, err := Git(".", "git", "clone", projectURL); err != nil {
 		return "", fmt.Errorf("Cannot git clone %s: %s", projectURL, output)
 	}
 
 	projectName := removeExtension(filepath.Base(projectURL))
 
 	fmt.Printf("Checking out %s environment branch\n", environment)
-	if err := git(projectName, "checkout", environment); err != nil {
+	if _, err := Git(projectName, "checkout", environment); err != nil {
 		return "", err
 	}
 
