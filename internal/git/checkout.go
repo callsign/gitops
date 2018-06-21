@@ -14,7 +14,6 @@ func Checkout(projectURL, environment string) (string, error) {
 	fmt.Println("Cloning GitOps project")
 	if _, err := Git(".", "clone", projectURL); err != nil {
 		return "", err
-		//return "", fmt.Errorf("Cannot git clone %s: %s", projectURL, output)
 	}
 
 	projectName := removeExtension(filepath.Base(projectURL))
