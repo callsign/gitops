@@ -17,7 +17,7 @@ func Test_Push(t *testing.T) {
 	}{{
 		name:          "should return an error on invalid project URL",
 		projectURL:    "invalid",
-		expectedError: fmt.Errorf("Cannot git clone *"),
+		expectedError: fmt.Errorf("Cannot git clone: *"),
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

@@ -12,9 +12,10 @@ import (
 func Git(directory string, arguments  ...string) (string, error) {
 	command := exec.Command("git", arguments...)
 	command.Dir = directory
-	output, err := command.CombinedOutput()
+	outputbytes, err := command.CombinedOutput()
+	output := strings.Trim(string(outputbytes[:]), "\n")
 	if err != nil {
 		return "", fmt.Errorf("Cannot git %s: %v", arguments[0], output)
 	}
-	return strings.Trim(string(output[:]), "\n"), nil
+	return output, nil
 }
