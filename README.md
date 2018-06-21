@@ -33,10 +33,10 @@ Features
 * Add a service prefix to the service configuration
 * Push the GitOps project modifications
 
-Getting
--------
+Getting Started
+---------------
 ```
-go get github.com/callsign/gitops
+go get github.com/callsign/gitops/...
 ```
 
 Building
