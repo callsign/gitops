@@ -59,6 +59,5 @@ func Test_Checkout(t *testing.T) {
 
 func cleanup() {
 	directory, _ := filepath.Abs("hellogitworld")
-	fmt.Println("directory:" + directory)
 	os.RemoveAll(directory)
 }

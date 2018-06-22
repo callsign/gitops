@@ -3,6 +3,7 @@
 package deployment
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/callsign/gitops/internal/configuration"
@@ -34,6 +35,8 @@ func Request(projectURL string) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Requesting deployment of %s %s to %s", serviceName, serviceVersion, environment)
 
 	err = service.Update(projectName, serviceName, serviceVersion)
 	if err != nil {

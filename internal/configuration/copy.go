@@ -12,7 +12,6 @@ import (
 )
 
 func copy(configurationPath, environment, projectName, serviceName string) error {
-	fmt.Println("Coping service configuration")
 	if configurationPath == "" {
 		return fmt.Errorf("Configuration path missing")
 	}

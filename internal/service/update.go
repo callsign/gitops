@@ -37,7 +37,6 @@ const stableHelmRepository = "https://kubernetes-charts.storage.googleapis.com"
 // 2) updating the Helm requirements.lock file
 func Update(projectName, serviceName, serviceVersion string) error {
 
-	fmt.Println("Updating requirements.yaml")
 	if serviceName == "" {
 		return fmt.Errorf("Missing service name")
 	}
@@ -61,12 +60,10 @@ func Update(projectName, serviceName, serviceVersion string) error {
 		return fmt.Errorf("Cannot update requirements.yaml: %v", err)
 	}
 
-	fmt.Println("Adding Helm repositories")
 	if err = addHelmRepositories(helmRepositories); err != nil {
 		return fmt.Errorf("Cannot add Helm repositories: %v", err)
 	}
 
-	fmt.Println("Updating requirements.lock")
 	if err = updateRequirementsLock(chartPath); err != nil {
 		return fmt.Errorf("Cannot update requirements.lock: %v", err)
 	}

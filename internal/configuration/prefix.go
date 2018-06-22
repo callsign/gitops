@@ -13,7 +13,6 @@ import (
 )
 
 func prefix(projectName, serviceName string) error {
-	fmt.Println("Adding service prefix to service configuration")
 	configurationPath, _ :=  filepath.Abs(path.Join(projectName, "configurations", serviceName))
 
 	if _, err := os.Stat(configurationPath); err != nil {

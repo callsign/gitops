@@ -11,7 +11,6 @@ import (
 
 // Version returns the service version
 func Version() (string, error) {
-	fmt.Println("Reading service version file")
 	return version(".")
 }
 
