@@ -43,11 +43,10 @@ func prefix(projectName, serviceName string) error {
 		if err = yaml.Unmarshal([]byte(fileBytes), &fileContent); err != nil {
 			return fmt.Errorf("Invalid YAML (%s)", filePath)
         }
-        fmt.Printf("--- fileContent:\n%v\n\n", fileContent)
 
 		updatedEntryContent := make(map[interface{}]interface{})
 		updatedEntryContent[serviceName] = fileContent
-		
+
         if fileBytes, err = yaml.Marshal(&updatedEntryContent); err != nil {
 			return fmt.Errorf("Cannot marshal updated configuration file (%s)", filePath)
         }

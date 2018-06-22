@@ -3,11 +3,14 @@
 package service
 
 import (
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -26,6 +29,8 @@ type Dependency struct {
 	Condition  string
 	Tags       []string
 }
+
+const stableHelmRepository = "https://kubernetes-charts.storage.googleapis.com"
 
 // Update the service in the GitOps project by
 // 1) updating the version in the Helm requirements.yaml file
@@ -51,8 +56,14 @@ func Update(projectName, serviceName, serviceVersion string) error {
 		return fmt.Errorf("Cannot read requirements.yaml: %v", err)
 	}
 
-	if err = updateRequirementsYaml(requirementsYaml, serviceName, serviceVersion, chartPath); err != nil {
+	var helmRepositories []string
+	if helmRepositories, err = updateRequirementsYaml(requirementsYaml, serviceName, serviceVersion, chartPath); err != nil {
 		return fmt.Errorf("Cannot update requirements.yaml: %v", err)
+	}
+
+	fmt.Println("Adding Helm repositories")
+	if err = addHelmRepositories(helmRepositories); err != nil {
+		return fmt.Errorf("Cannot add Helm repositories: %v", err)
 	}
 
 	fmt.Println("Updating requirements.lock")
@@ -94,34 +105,53 @@ func readRequirementsYaml(chartPath string) ([]byte, error) {
 	return ioutil.ReadFile(path)
 }
 
-func updateRequirementsYaml(file []byte, serviceName, serviceVersion, chartPath string) error {
+func updateRequirementsYaml(file []byte, serviceName, serviceVersion, chartPath string) ([]string ,error) {
 	requirementsYaml := RequirementsYaml{}
 	if err := yaml.Unmarshal(file, &requirementsYaml); err != nil {
-		return fmt.Errorf("Cannot unmarshal file")
+		return nil, fmt.Errorf("Cannot unmarshal file")
 	}
 
 	var serviceFound bool
+	helmRepositories := make([]string, 0)
 	for index, dependency := range requirementsYaml.Dependencies {
 		if dependency.Name == serviceName {
 			dependency.Version = serviceVersion
 			requirementsYaml.Dependencies[index] = dependency
 			serviceFound = true
 		}
+		if dependency.Repository != stableHelmRepository &&
+		   !stringInSlice(dependency.Repository, helmRepositories) &&
+		   !strings.HasPrefix(dependency.Repository, "file") {
+			helmRepositories = append(helmRepositories, dependency.Repository)
+		}
 	}
 
 	if !serviceFound {
-		return fmt.Errorf("Missing service entry")
+		return nil, fmt.Errorf("Missing service entry")
 	}
 
 	updatedFile, err := yaml.Marshal(&requirementsYaml)
 	if err != nil {
-		return fmt.Errorf("Cannot marshal updated file")
+		return nil, fmt.Errorf("Cannot marshal updated file")
 	}
 
 	if err := ioutil.WriteFile(path.Join(chartPath, "requirements.yaml"), updatedFile, 0644); err != nil {
-		return fmt.Errorf("Cannot write updated file")
+		return nil, fmt.Errorf("Cannot write updated file")
 	}
 
+	return helmRepositories, nil
+}
+
+func addHelmRepositories(repositories []string) error {
+	for _, repository := range repositories {
+		random := make([]byte, 4)
+	    rand.Read(random)
+		name := hex.EncodeToString(random)
+		command := exec.Command("helm", "repo", "add", name, repository)
+		if output, err := command.CombinedOutput(); err != nil {
+			return fmt.Errorf("%s", output)
+		}
+	}
 	return nil
 }
 
@@ -132,4 +162,13 @@ func updateRequirementsLock(chartPath string) error {
 		return fmt.Errorf("%s", output)
 	}
 	return nil
+}
+
+func stringInSlice(element string, list []string) bool {
+    for _, current := range list {
+        if current == element {
+            return true
+        }
+    }
+    return false
 }
