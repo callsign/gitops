@@ -36,7 +36,7 @@ func Request(projectURL string) error {
 		return err
 	}
 
-	fmt.Printf("Requesting deployment of %s %s to %s", serviceName, serviceVersion, environment)
+	fmt.Printf("Requesting deployment of %s %s to %s\n", serviceName, serviceVersion, environment)
 
 	err = service.Update(projectName, serviceName, serviceVersion)
 	if err != nil {
