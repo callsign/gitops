@@ -25,9 +25,9 @@ type Dependency struct {
 	Name       string
 	Version    string
 	Repository string
-	Alias      string
-	Condition  string
-	Tags       []string
+	Alias      string   `yaml:",omitempty"`
+	Condition  string   `yaml:",omitempty"`
+	Tags       []string `yaml:",omitempty"`
 }
 
 const stableHelmRepository = "https://kubernetes-charts.storage.googleapis.com"
