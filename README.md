@@ -10,7 +10,7 @@ Usage
 Usage: gitops <command> <argument(s)>
        Valid commands:
             gitops request-deployment <project-url>
-            gitops update-configuration <environment> <project-path>
+            gitops update-configuration <project-path>
 ```
 
 This command should be run from the directory of the service to deploy.
@@ -29,7 +29,7 @@ Features
 
 * Update the service version in the application Helm *requirements.yaml* (using *build/packages/version* file)
 * Update the the application Helm *requirements.lock*
-* Copy the service configuration to the GitOps project (*environments/`<environment>`* to *configurations/`<service>`*)
+* Copy the service configuration to the GitOps project (*environments/`<environment>`* to *configurations/`<service>`/`<environment>`*)
 * Add a service prefix to the service configuration
 * Commit and push the GitOps project changes
 

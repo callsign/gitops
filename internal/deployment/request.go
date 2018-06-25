@@ -26,7 +26,7 @@ func Request(projectURL string) error {
 
 	serviceName := service.Name()
 	configurationPath, _ := filepath.Abs("environments")
-	err = configuration.Update(configurationPath, environment, projectName, serviceName)
+	err = configuration.Update(configurationPath, projectName, serviceName)
 	if err != nil {
 		return err
 	}

@@ -11,12 +11,9 @@ import (
 	"github.com/callsign/gitops/internal/directory"
 )
 
-func copy(configurationPath, environment, projectName, serviceName string) error {
+func copy(configurationPath, projectName, serviceName string) error {
 	if configurationPath == "" {
 		return fmt.Errorf("Configuration path missing")
-	}
-	if environment == "" {
-		return fmt.Errorf("Environment missing")
 	}
 	if projectName == "" {
 		return fmt.Errorf("Project name missing")
@@ -35,7 +32,7 @@ func copy(configurationPath, environment, projectName, serviceName string) error
 		return fmt.Errorf("Project directory is a file (%s)", projectPath)
 	}
 
-	source, _ := filepath.Abs(path.Join(configurationPath, environment))
+	source, _ := filepath.Abs(configurationPath)
 	destination := path.Join(projectPath, "configurations", serviceName)
 
 	return directory.Copy(source, destination)

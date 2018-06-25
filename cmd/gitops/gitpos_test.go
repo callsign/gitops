@@ -32,7 +32,7 @@ func Test_main(t *testing.T) {
 		arguments: []string{"gitops", "update-configuration"},
 	}, {
 		name: "should log usage when too many update command parameters",
-		arguments: []string{"gitops", "update-configuration", "staging", "../project", "invalid-parameter"},
+		arguments: []string{"gitops", "update-configuration", "../project", "invalid-parameter"},
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

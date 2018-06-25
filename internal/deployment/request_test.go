@@ -9,7 +9,7 @@ import (
 	"github.com/callsign/gitops/internal/testutil"
 )
 
-func Test_Push(t *testing.T) {
+func Test_Request(t *testing.T) {
 	tests := []struct {
 		name          string
 		projectURL    string

@@ -19,8 +19,8 @@ func main() {
 		if err := deployment.Request(arguments[1]); err != nil {
 			log.Fatalln(err)
 		}
-	} else if len(arguments) == 3 && arguments[0] == "update-configuration" {
-		if err := configuration.Update("environments", arguments[1], arguments[2], service.Name()); err != nil {
+	} else if len(arguments) == 2 && arguments[0] == "update-configuration" {
+		if err := configuration.Update("environments", arguments[1], service.Name()); err != nil {
 			log.Fatalln(err)
 		}
 	} else {
@@ -33,6 +33,6 @@ func usage() string {
 	buffer.WriteString("Usage: gitops <command> <argument(s)>\n")
 	buffer.WriteString("       Valid commands:\n")
 	buffer.WriteString("          gitops request-deployment <project-url>\n")
-	buffer.WriteString("          gitops update-configuration <environment> <project-path>")
+	buffer.WriteString("          gitops update-configuration <project-path>")
 	return buffer.String()
 }

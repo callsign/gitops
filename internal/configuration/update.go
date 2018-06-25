@@ -7,11 +7,11 @@ import (
 )
 
 // Update the service configuration in the GitOps project
-// 1) Copy environments/<environment> to configurations/<service>
-// 2) Prefix the configuration keys with the service name 
-func Update(configurationPath, environment, projectName, serviceName string) error {
+// 1) Copy environments/* to configurations/<service>/
+// 2) Prefix the configuration keys with the service name
+func Update(configurationPath, projectName, serviceName string) error {
 
-	if err := copy(configurationPath, environment, projectName, serviceName); err != nil {
+	if err := copy(configurationPath, projectName, serviceName); err != nil {
 		return fmt.Errorf("Cannot copy service configuration: %v", err)
 	}
 
