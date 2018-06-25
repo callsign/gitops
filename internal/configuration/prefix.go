@@ -51,6 +51,10 @@ func prefix(projectName, serviceName string) error {
 				return fmt.Errorf("Invalid YAML (%s)", filePath)
 			}
 
+			if len(fileContent) == 0 {
+				continue;
+			}
+
 			updatedEntryContent := make(map[interface{}]interface{})
 			updatedEntryContent[serviceName] = fileContent
 

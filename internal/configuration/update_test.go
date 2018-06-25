@@ -107,9 +107,12 @@ func Test_Update(t *testing.T) {
 			testutil.VerifyError(test.expectedError, err, t)
 
 			expected := testutil.ReadFile(path.Join(testData, test.expectedConfigurationFile), t, err)
-			actual := testutil.ReadFile(path.Join(projectName, "configurations", test.serviceName, "staging/values.yaml"), t, err)
-			if err == nil && actual != expected {
-				t.Fatalf("\nUnexpected configuration file:\nExpected: %v\nGot: %v", expected, actual)
+			environments := []string{"staging", "production"}
+			for _, environment := range environments {
+				actual := testutil.ReadFile(path.Join(projectName, "configurations", test.serviceName, environment, "values.yaml"), t, err)
+				if err == nil && actual != expected {
+					t.Fatalf("\nUnexpected configuration file:\nExpected: %v\nGot: %v", expected, actual)
+				}
 			}
 		})
 	}
