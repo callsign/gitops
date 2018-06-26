@@ -48,17 +48,17 @@ func Test_Update(t *testing.T) {
 		input:          "multiple-charts",
 		expectedError:  fmt.Errorf("Cannot find chart: Multiple charts"),
 	}, {
-		name:           "should return an error if the file is missing",
+		name:           "should add a dependency if the file is missing",
 		serviceName:    "service",
 		serviceVersion: "2.1.1805200912+abcde",
 		input:          "missing-requirements",
-		expectedError:  fmt.Errorf("Cannot read requirements.yaml: Missing requirements.yaml"),
+		expectedRequirementsYaml: "expected-requirements.yaml",
 	}, {
-		name:           "should return an error if the file is presant but the service is missing",
+		name:           "should add a dependency if the file is presant but the service is missing",
 		serviceName:    "service",
 		serviceVersion: "2.1.1805200912+abcde",
 		input:          "missing-service",
-		expectedError:  fmt.Errorf("Cannot update requirements.yaml: Missing service entry"),
+		expectedRequirementsYaml: "expected-requirements.yaml",
 	}, {
 		name:           "should update the version and the requirements.lock if the file and the service are present",
 		serviceName:    "service",
@@ -77,6 +77,7 @@ func Test_Update(t *testing.T) {
 			}
 
 			projectName := path.Join(testutil.GeneratedData("service/update", false), test.input)
+			companyHelmRepository = "file://../../service/charts/service"
 			err := Update(projectName, test.serviceName, test.serviceVersion)
 
 			testutil.VerifyError(test.expectedError, err, t)
@@ -87,10 +88,12 @@ func Test_Update(t *testing.T) {
 				t.Fatalf("\nUnexpected requirements.yaml:\nExpected: %v\nGot: %v", expected, actual)
 			}
 
-			expected = testutil.ReadFile(path.Join(testData, test.expectedRequirementsLock), t, err)
-			actual = testutil.ReadFile(path.Join(generatedTestData, "/charts/application/requirements.lock"), t, err)
-			if err == nil && !strings.HasPrefix(actual, expected) {
-				t.Fatalf("\nUnexpected requirements.lock:\nExpected: %v\nGot: %v", expected, actual)
+			if test.expectedRequirementsLock != "" {
+				expected = testutil.ReadFile(path.Join(testData, test.expectedRequirementsLock), t, err)
+				actual = testutil.ReadFile(path.Join(generatedTestData, "/charts/application/requirements.lock"), t, err)
+				if err == nil && !strings.HasPrefix(actual, expected) {
+					t.Fatalf("\nUnexpected requirements.lock:\nExpected: %v\nGot: %v", expected, actual)
+				}
 			}
 		})
 	}
