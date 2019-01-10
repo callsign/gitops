@@ -23,7 +23,7 @@ Features
 
 | Service project branch     | GitOps project branch |
 |----------------------------|-----------------------|
-| ^develop$                  | verify                |
+| ^develop$                  | dev                   |
 | ^(release\|hotfix)\\/\\S+$ | staging               |
 | ^master$                   | production            |
 
