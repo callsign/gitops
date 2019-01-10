@@ -13,7 +13,7 @@ import (
 var environments = map[string]string{
 	"production": "^master$",
 	"staging":    "^(release|hotfix)\\/\\S+$",
-	"verify":     "^develop$",
+	"dev":     "^develop$",
 }
 
 // Get the environment to deploy to
