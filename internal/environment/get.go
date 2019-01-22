@@ -26,18 +26,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// DeploymentsYaml a deployments Yaml
-type DeploymentsYaml struct {
-	Deployments []eployment
+// CustomDeploymentsYaml a custom deployments Yaml
+type CustomDeploymentsYaml struct {
+	Deployments []CustomDeployment
 }
 
-// Deployment a deployment
-type Deployment struct {
+// CustomDeployment a custom deployment
+type CustomDeployment struct {
 	Branch      string
 	Environment string
 }
 
-var environments = map[string]string{
+var standardEnvironments = map[string]string{
 	"prod":    "^master$",
 	"staging": "^(release|hotfix)\\/\\S+$",
 	"dev":     "^develop$",
@@ -52,35 +52,35 @@ func Get() (string, error) {
 	if serviceBranch == "HEAD" {
 		serviceBranch = os.Getenv("CI_COMMIT_REF_NAME")
 	}
-	return serviceBranchToEnvironment(serviceBranch, "deployments.yaml")
+	return serviceBranchToEnvironment(serviceBranch, "custom-deployments.yaml")
 }
 
-func serviceBranchToEnvironment(serviceBranch, deploymentsYamlPath string) (string, error) {
+func serviceBranchToEnvironment(serviceBranch, customDeploymentsYamlPath string) (string, error) {
 
-	for environment, serviceBranchRegexp := range environments {
+	for standardEnvironment, serviceBranchRegexp := range standardEnvironments {
 		if match, _ := regexp.MatchString(serviceBranchRegexp, serviceBranch); match {
-			return environment, nil
+			return standardEnvironment, nil
 		}
 	}
 
-	deploymentsYaml := DeploymentsYaml{}
-	if _, err := os.Stat(deploymentsYamlPath); err == nil {
-		deploymentsYamlFile, err := ioutil.ReadFile(deploymentsYamlPath)
+	customDeploymentsYaml := CustomDeploymentsYaml{}
+	if _, err := os.Stat(customDeploymentsYamlPath); err == nil {
+		customDeploymentsYamlFile, err := ioutil.ReadFile(customDeploymentsYamlPath)
 		if err != nil {
-			return "", fmt.Errorf("Cannot read %s: %v", deploymentsYamlPath, err)
+			return "", fmt.Errorf("Cannot read %s: %v", customDeploymentsYamlPath, err)
 		}
-		if err := yaml.Unmarshal(deploymentsYamlFile, &deploymentsYaml); err != nil {
-			return "", fmt.Errorf("Cannot unmarshal %s: %v", deploymentsYamlPath, err)
+		if err := yaml.Unmarshal(customDeploymentsYamlFile, &customDeploymentsYaml); err != nil {
+			return "", fmt.Errorf("Cannot unmarshal %s: %v", customDeploymentsYamlPath, err)
 		}
-		for _, deployment := range deploymentsYaml.Deployments {
-			if deployment.Branch == serviceBranch {
-				for standardEnvironment := range environments {
-					if deployment.Environment == standardEnvironment {
+		for _, customDeployment := range customDeploymentsYaml.Deployments {
+			if customDeployment.Branch == serviceBranch {
+				for standardEnvironment := range standardEnvironments {
+					if customDeployment.Environment == standardEnvironment {
 						format := "Deployment of service branch %s to deployment environment %s forbidden"
 						return "", fmt.Errorf(format, serviceBranch, standardEnvironment)
 					}
 				}
-				return deployment.Environment, nil
+				return customDeployment.Environment, nil
 			}
 		}
 	}
