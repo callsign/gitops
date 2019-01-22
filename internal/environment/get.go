@@ -52,7 +52,7 @@ func Get() (string, error) {
 	if serviceBranch == "HEAD" {
 		serviceBranch = os.Getenv("CI_COMMIT_REF_NAME")
 	}
-	return serviceBranchToEnvironment(serviceBranch, "custom-deployments.yaml")
+	return serviceBranchToEnvironment(serviceBranch, "deployments.yaml")
 }
 
 func serviceBranchToEnvironment(serviceBranch, customDeploymentsYamlPath string) (string, error) {
