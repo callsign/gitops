@@ -1,12 +1,10 @@
-GitOps
-======
+# GitOps
 
 CLI tool to deploy applications using GitOps.
 
-Usage
------
+## Usage
 
-```
+```text
 Usage: gitops <command> <argument(s)>
        Valid commands:
             gitops request-deployment <project-url>
@@ -15,17 +13,17 @@ Usage: gitops <command> <argument(s)>
 
 This command should be run from the directory of the service to deploy.
 
-Features
---------
+## Features
 
 * Clone the GitOps project
 * Checkout the environment branch following this mapping:
 
-| Service project branch     | GitOps project branch |
-|----------------------------|-----------------------|
-| ^develop$                  | dev                   |
-| ^(release\|hotfix)\\/\\S+$ | staging               |
-| ^master$                   | production            |
+| Service project branch              | GitOps project branch |
+|-------------------------------------|-----------------------|
+| ^develop$                           | dev                   |
+| ^(release\|hotfix)\\/\\S+$          | staging               |
+| ^master$                            | prod                  |
+| `<custom>` (see Custom Deployments) | `<custom>`            |
 
 * Update the service version in the application Helm *requirements.yaml* (using *build/packages/version* file)
 * Update the the application Helm *requirements.lock*
@@ -33,21 +31,35 @@ Features
 * Add a service prefix to the service configuration
 * Commit and push the GitOps project changes
 
-Getting Started
----------------
-```
+## Getting Started
+
+```bash
 go get github.com/callsign/gitops/...
 ```
 
-Building
---------
-```
+## Building
+
+```bash
 go install github.com/callsign/gitops/...
 ```
 
-Testing
--------
-```
+## Testing
+
+```bash
 go test github.com/callsign/gitops/... -coverprofile=coverage.out
 go tool cover -html=coverage.out
 ```
+
+## Custom Deployments
+
+To deploy branches not covered by the standard branch to environment mappings, please create a `custom-deployments.yaml` file in the application directory with a content like:
+
+```yaml
+deployments:
+- branch: feature/foo
+  environment: bar
+```
+
+## License
+
+GitOps is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html)
