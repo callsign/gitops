@@ -47,11 +47,11 @@ func Test_Get(t *testing.T) {
 
 func Test_serviceBranchToEnvironment(t *testing.T) {
 	tests := []struct {
-		name                  string
-		serviceBranch         string
-		customDeploymentsYaml string
-		expectedError         error
-		expectedResult        string
+		name            string
+		serviceBranch   string
+		deploymentsYaml string
+		expectedError   error
+		expectedResult  string
 	}{{
 		name:           "should support standard environments",
 		serviceBranch:  "develop",
@@ -61,32 +61,32 @@ func Test_serviceBranchToEnvironment(t *testing.T) {
 		serviceBranch: "unknown",
 		expectedError: fmt.Errorf("Cannot find deployment environment for service branch unknown"),
 	}, {
-		name:                  "should support custom deployments",
-		serviceBranch:         "feature/foo",
-		customDeploymentsYaml: "valid-custom-deployments.yaml",
-		expectedResult:        "bar",
+		name:            "should support custom deployments",
+		serviceBranch:   "feature/foo",
+		deploymentsYaml: "valid-deployments.yaml",
+		expectedResult:  "bar",
 	}, {
-		name:                  "should not allow custom deployments to deploy to standard environments",
-		serviceBranch:         "feature/foo",
-		customDeploymentsYaml: "forbidden-custom-deployments.yaml",
-		expectedError:         fmt.Errorf("Deployment of service branch feature/foo to deployment environment prod forbidden"),
+		name:            "should not allow custom deployments to deploy to standard environments",
+		serviceBranch:   "feature/foo",
+		deploymentsYaml: "forbidden-deployments.yaml",
+		expectedError:   fmt.Errorf("Deployment of service branch feature/foo to deployment environment prod forbidden"),
 	}, {
-		name: "should return an error on unreadable custom deployments yaml",
-		customDeploymentsYaml: ".",
-		expectedError:         fmt.Errorf("Cannot read *"),
+		name:            "should return an error on unreadable custom deployments yaml",
+		deploymentsYaml: ".",
+		expectedError:   fmt.Errorf("Cannot read *"),
 	}, {
-		name:                  "should return an error on invalid custom deployments yaml",
-		serviceBranch:         "feature/foo",
-		customDeploymentsYaml: "invalid-custom-deployments.yaml",
-		expectedError:         fmt.Errorf("Cannot unmarshal *"),
+		name:            "should return an error on invalid custom deployments yaml",
+		serviceBranch:   "feature/foo",
+		deploymentsYaml: "invalid-deployments.yaml",
+		expectedError:   fmt.Errorf("Cannot unmarshal *"),
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			var customDeploymentsYamlPath string
-			if test.customDeploymentsYaml != "" {
-				customDeploymentsYamlPath = path.Join(testutil.Data("environment/get"), test.customDeploymentsYaml)
+			var deploymentsYamlPath string
+			if test.deploymentsYaml != "" {
+				deploymentsYamlPath = path.Join(testutil.Data("environment/get"), test.deploymentsYaml)
 			}
-			actualResult, actualError := serviceBranchToEnvironment(test.serviceBranch, customDeploymentsYamlPath)
+			actualResult, actualError := serviceBranchToEnvironment(test.serviceBranch, deploymentsYamlPath)
 			testutil.VerifyError(test.expectedError, actualError, t)
 			if test.expectedResult != actualResult {
 				t.Fatalf("\nUnexpected result:\nExpected: %v\nGot: %v", test.expectedResult, actualResult)
