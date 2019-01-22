@@ -26,13 +26,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// CustomDeploymentsYaml a custom deployments Yaml
-type CustomDeploymentsYaml struct {
-	Deployments []CustomDeployment
+// DeploymentsYaml a deployments Yaml
+type DeploymentsYaml struct {
+	Deployments []eployment
 }
 
-// CustomDeployment a custom deployment
-type CustomDeployment struct {
+// Deployment a deployment
+type Deployment struct {
 	Branch      string
 	Environment string
 }
@@ -55,7 +55,7 @@ func Get() (string, error) {
 	return serviceBranchToEnvironment(serviceBranch, "deployments.yaml")
 }
 
-func serviceBranchToEnvironment(serviceBranch, customDeploymentsYamlPath string) (string, error) {
+func serviceBranchToEnvironment(serviceBranch, deploymentsYamlPath string) (string, error) {
 
 	for environment, serviceBranchRegexp := range environments {
 		if match, _ := regexp.MatchString(serviceBranchRegexp, serviceBranch); match {
@@ -63,24 +63,24 @@ func serviceBranchToEnvironment(serviceBranch, customDeploymentsYamlPath string)
 		}
 	}
 
-	customDeploymentsYaml := CustomDeploymentsYaml{}
-	if _, err := os.Stat(customDeploymentsYamlPath); err == nil {
-		customDeploymentsYamlFile, err := ioutil.ReadFile(customDeploymentsYamlPath)
+	deploymentsYaml := DeploymentsYaml{}
+	if _, err := os.Stat(deploymentsYamlPath); err == nil {
+		deploymentsYamlFile, err := ioutil.ReadFile(deploymentsYamlPath)
 		if err != nil {
-			return "", fmt.Errorf("Cannot read %s: %v", customDeploymentsYamlPath, err)
+			return "", fmt.Errorf("Cannot read %s: %v", deploymentsYamlPath, err)
 		}
-		if err := yaml.Unmarshal(customDeploymentsYamlFile, &customDeploymentsYaml); err != nil {
-			return "", fmt.Errorf("Cannot unmarshal %s: %v", customDeploymentsYamlPath, err)
+		if err := yaml.Unmarshal(deploymentsYamlFile, &deploymentsYaml); err != nil {
+			return "", fmt.Errorf("Cannot unmarshal %s: %v", deploymentsYamlPath, err)
 		}
-		for _, customDeployment := range customDeploymentsYaml.Deployments {
-			if customDeployment.Branch == serviceBranch {
+		for _, deployment := range deploymentsYaml.Deployments {
+			if deployment.Branch == serviceBranch {
 				for standardEnvironment := range environments {
-					if customDeployment.Environment == standardEnvironment {
+					if deployment.Environment == standardEnvironment {
 						format := "Deployment of service branch %s to deployment environment %s forbidden"
 						return "", fmt.Errorf(format, serviceBranch, standardEnvironment)
 					}
 				}
-				return customDeployment.Environment, nil
+				return deployment.Environment, nil
 			}
 		}
 	}
