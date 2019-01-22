@@ -52,7 +52,7 @@ go tool cover -html=coverage.out
 
 ## Custom Deployments
 
-To deploy branches not covered by the standard branch to environment mappings, please create a `custom-deployments.yaml` file in the application directory with a content like:
+To deploy branches not covered by the standard branch to environment mappings, please create a `deployments.yaml` file in the application directory with a content like:
 
 ```yaml
 deployments:
