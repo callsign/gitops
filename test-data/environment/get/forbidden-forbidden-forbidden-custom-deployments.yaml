@@ -1,0 +1,3 @@
+deployments:
+- branch: feature/foo
+  environment: prod
