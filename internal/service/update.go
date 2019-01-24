@@ -97,10 +97,6 @@ func getChartPath(projectName string) (string, error) {
 		return "", fmt.Errorf("Missing chart")
 	}
 
-	if len(chartParentEntries) > 1 {
-		return "", fmt.Errorf("Multiple charts")
-	}
-
 	return path.Join(chartParent, chartParentEntries[0].Name()), nil
 }
 
