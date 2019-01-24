@@ -56,12 +56,6 @@ func Test_Update(t *testing.T) {
 		input:          "missing-chart",
 		expectedError:  fmt.Errorf("Cannot find chart: Missing chart"),
 	}, {
-		name:           "should return an error if multiple charts exist",
-		serviceName:    "service",
-		serviceVersion: "2.1.1805200912+abcde",
-		input:          "multiple-charts",
-		expectedError:  fmt.Errorf("Cannot find chart: Multiple charts"),
-	}, {
 		name:           "should add a dependency if the file is missing",
 		serviceName:    "service",
 		serviceVersion: "2.1.1805200912+abcde",
