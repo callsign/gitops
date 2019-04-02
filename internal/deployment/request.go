@@ -40,11 +40,11 @@ func Request(projectURL string) error {
 	}
 
 	serviceName := service.Name()
-	err = kubernetes.Update(projectName, serviceName, environment)
+	err = kubernetes.Update(projectName, serviceName)
 	if err != nil {
 		return err
-	}	
-	
+	}
+
 	configurationPath, _ := filepath.Abs("environments")
 	err = configuration.Update(configurationPath, projectName, serviceName)
 	if err != nil {
