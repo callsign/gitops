@@ -23,7 +23,7 @@ import (
 	"github.com/callsign/gitops/internal/configuration"
 	"github.com/callsign/gitops/internal/environment"
 	"github.com/callsign/gitops/internal/git"
-	"github.com/callsign/gitops/internal/kubernetes"
+	"github.com/callsign/gitops/internal/manifests"
 	"github.com/callsign/gitops/internal/service"
 )
 
@@ -40,7 +40,7 @@ func Request(projectURL string) error {
 	}
 
 	serviceName := service.Name()
-	err = kubernetes.Update(projectName, serviceName)
+	err = manifests.Update(projectName, serviceName)
 	if err != nil {
 		return err
 	}
