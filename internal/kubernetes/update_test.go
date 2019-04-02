@@ -30,14 +30,12 @@ func Test_Update(t *testing.T) {
 		name              string
 		projectName       string
 		serviceName       string
-		environment       string
 		expectedError     error
 		expectedResources string
 	}{{
 		name:        "should produce kubernetes resources on success",
 		projectName: "success",
 		serviceName: "test",
-		environment: "dev",
 	}, {
 		name:          "should return an error if the project name is missing",
 		expectedError: fmt.Errorf("Missing project name"),
@@ -46,45 +44,39 @@ func Test_Update(t *testing.T) {
 		projectName:   "missing-service-name",
 		expectedError: fmt.Errorf("Missing service name"),
 	}, {
-		name:          "should return an error if the environment is missing",
-		projectName:   "missing-environment",
+		name:          "should return an error on failure to read the environments directory",
+		projectName:   "no-environments-directory",
 		serviceName:   "test",
-		expectedError: fmt.Errorf("Missing environment"),
+		expectedError: fmt.Errorf("Cannot get environments: Cannot read environments directory"),
 	}, {
 		name:          "should return an error on helm template execution error",
 		projectName:   "helm-template-execution-error",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot execute helm template: *"),
 	}, {
 		name:          "should return an error on missing packaged chart directory",
 		projectName:   "missing-packaged-chart-directory",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot execute helm template: Cannot read build/packages/helm directory"),
 	}, {
 		name:          "should return an error on missing packaged chart",
 		projectName:   "missing-packaged-chart",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot execute helm template: Missing packaged chart in build/packages/helm"),
 	}, {
 		name:          "should return an error if the project directory does not exist",
 		projectName:   "project-directory-does-not-exist",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot copy Kubernetes resources: Project directory does not exist (*"),
 	}, {
 		name:          "should return an error if the project directory is a file",
 		projectName:   "project-directory-is-a-file",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot copy Kubernetes resources: Project directory is a file (*"),
 	}, {
 		name:          "should return an error on resources copy error",
 		projectName:   "resources-copy-error",
 		serviceName:   "test",
-		environment:   "dev",
 		expectedError: fmt.Errorf("Cannot copy Kubernetes resources: *"),
 	}}
 	for _, test := range tests {
@@ -103,17 +95,18 @@ func Test_Update(t *testing.T) {
 				} else if test.projectName != "project-directory-does-not-exist" {
 					os.MkdirAll(projectName, 0755)
 				}
+				t.Logf("cwd:%s", path.Join(testutil.Data("kubernetes/update"), test.projectName))
 				_ = os.Chdir(path.Join(testutil.Data("kubernetes/update"), test.projectName))
 			}
 
-			err := Update(projectName, test.serviceName, test.environment)
+			err := Update(projectName, test.serviceName)
 
 			_ = os.Chdir(previousCurrentDirectory)
 
 			testutil.VerifyError(test.expectedError, err, t)
 
 			if err == nil {
-				expectedFile := path.Join(projectName, "kubernetes", "test", "deployment.yaml")
+				expectedFile := path.Join(projectName, "kubernetes", "dev", "test", "deployment.yaml")
 				if _, err := os.Stat(expectedFile); os.IsNotExist(err) {
 					t.Fatalf("\nExpected file %s does not exist", expectedFile)
 				}

@@ -27,7 +27,7 @@ import (
 )
 
 // Update the Kubernetes resources
-func Update(projectName, serviceName, environment string) error {
+func Update(projectName, serviceName string) error {
 
 	if projectName == "" {
 		return fmt.Errorf("Missing project name")
@@ -35,9 +35,35 @@ func Update(projectName, serviceName, environment string) error {
 	if serviceName == "" {
 		return fmt.Errorf("Missing service name")
 	}
-	if environment == "" {
-		return fmt.Errorf("Missing environment")
+
+	environments, err := getEnvironments()
+	if err != nil {
+		return fmt.Errorf("Cannot get environments: %v", err)
 	}
+
+	for _, environment := range environments {
+		if err = update(projectName, serviceName, environment); err != nil {
+			return err;
+		}
+	}
+
+	return nil
+}
+
+func getEnvironments() ([]string, error) {
+	var environmentsDirectoryEntries []os.FileInfo
+	var err error
+	if environmentsDirectoryEntries, err = ioutil.ReadDir("environments"); err != nil {
+		return nil, fmt.Errorf("Cannot read environments directory")
+	}
+	environments := make([]string, len(environmentsDirectoryEntries))
+	for index := range environmentsDirectoryEntries {
+		environments[index] = environmentsDirectoryEntries[index].Name()
+	}
+	return environments, nil;
+}
+
+func update(projectName, serviceName, environment string) error {
 
 	temporaryDirectory, err := ioutil.TempDir("", "")
 	if err != nil {
@@ -49,7 +75,7 @@ func Update(projectName, serviceName, environment string) error {
 		return fmt.Errorf("Cannot execute helm template: %v", err)
 	}
 
-	if err := copyResources(projectName, serviceName, temporaryDirectory); err != nil {
+	if err := copyResources(projectName, serviceName, environment, temporaryDirectory); err != nil {
 		return fmt.Errorf("Cannot copy Kubernetes resources: %v", err)
 	}
 
@@ -80,7 +106,7 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	return nil
 }
 
-func copyResources(projectName, serviceName, temporaryDirectory string) error {
+func copyResources(projectName, serviceName, environment, temporaryDirectory string) error {
 
 	projectPath, _ := filepath.Abs(projectName)
 	var projectInfo os.FileInfo
@@ -93,7 +119,7 @@ func copyResources(projectName, serviceName, temporaryDirectory string) error {
 	}
 
 	source, _ := filepath.Abs(path.Join(temporaryDirectory, serviceName, "templates"))
-	destination := path.Join(projectPath, "kubernetes", serviceName)
+	destination := path.Join(projectPath, "kubernetes", environment, serviceName)
 
 	return directory.Copy(source, destination)
 }
