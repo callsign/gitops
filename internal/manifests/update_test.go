@@ -64,6 +64,11 @@ func Test_Update(t *testing.T) {
 		serviceName:   "test",
 		expectedError: fmt.Errorf("Cannot execute helm template: Missing packaged chart in build/packages/helm"),
 	}, {
+		name:          "should return an error on missing version file",
+		projectName:   "missing-version-file",
+		serviceName:   "test",
+		expectedError: fmt.Errorf("Cannot execute helm template: Cannot determine release: Cannot read service version file (*"),
+	}, {
 		name:          "should return an error if the project directory does not exist",
 		projectName:   "project-directory-does-not-exist",
 		serviceName:   "test",
@@ -99,7 +104,6 @@ func Test_Update(t *testing.T) {
 				} else if test.projectName != "project-directory-does-not-exist" {
 					os.MkdirAll(projectName, 0755)
 				}
-				t.Logf("cwd:%s", path.Join(testutil.Data("manifests/update"), test.projectName))
 				_ = os.Chdir(path.Join(testutil.Data("manifests/update"), test.projectName))
 			}
 

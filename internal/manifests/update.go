@@ -17,7 +17,6 @@
 package manifests
 
 import (
-	"github.com/callsign/gitops/internal/directory"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -25,10 +24,14 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/callsign/gitops/internal/directory"
+	"github.com/callsign/gitops/internal/service"
 )
 
 const packagedChartDirectory = "build/packages/helm"
-var namespaceTruncations = [1] string {"-deployment"}
+
+var namespaceTruncations = [1]string{"-deployment"}
 
 // Update the manifests
 func Update(projectName, serviceName string) error {
@@ -47,7 +50,7 @@ func Update(projectName, serviceName string) error {
 
 	for _, environment := range environments {
 		if err = update(projectName, serviceName, environment); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -64,7 +67,7 @@ func getEnvironments() ([]string, error) {
 	for index := range environmentsDirectoryEntries {
 		environments[index] = environmentsDirectoryEntries[index].Name()
 	}
-	return environments, nil;
+	return environments, nil
 }
 
 func update(projectName, serviceName, environment string) error {
@@ -96,14 +99,20 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	if len(packagedChartDirectoryEntries) == 0 {
 		return fmt.Errorf("Missing packaged chart in %s", packagedChartDirectory)
 	}
-	packagedChartFilename := packagedChartDirectoryEntries[len(packagedChartDirectoryEntries) - 1].Name()
+	packagedChartFilename := packagedChartDirectoryEntries[len(packagedChartDirectoryEntries)-1].Name()
 
 	chartArgument := fmt.Sprintf("build/packages/helm/%s", packagedChartFilename)
 	namespaceArgument := fmt.Sprintf("--namespace=%s-%s", getNamespace(projectName), environment)
 	outputDirectoryArgument := fmt.Sprintf("--output-dir=%s", temporaryDirectory)
 	valuesArgument := fmt.Sprintf("environments/%s/values.yaml", environment)
+	release, err := getRelease()
+	if err != nil {
+		return err
+	}
+	releaseArgument := fmt.Sprintf("--name=%s", release)
 
-	command := exec.Command("helm", "template", chartArgument, namespaceArgument, outputDirectoryArgument, "-f", valuesArgument)
+	command := exec.Command("helm", "template", chartArgument, namespaceArgument,
+	                        outputDirectoryArgument, "-f", valuesArgument, releaseArgument)
 	if output, err := command.CombinedOutput(); err != nil {
 		return fmt.Errorf("%s", output)
 	}
@@ -118,9 +127,23 @@ func getNamespace(projectName string) string {
 	}
 	lastSlashIndex := strings.LastIndex(namespace, "/")
 	if lastSlashIndex != -1 {
-		namespace = namespace[lastSlashIndex + 1:len(namespace)]
+		namespace = namespace[lastSlashIndex+1 : len(namespace)]
 	}
 	return namespace
+}
+
+func getRelease() (string, error) {
+	version, err := service.Version()
+	if err != nil {
+		return "", fmt.Errorf("Cannot determine release: %v", err)
+	}
+	majorVersion := version
+	dotIndex := strings.Index(version, ".")
+	if dotIndex != -1 {
+		majorVersion = version[:dotIndex]
+	}
+
+	return fmt.Sprintf("v%s", majorVersion), nil
 }
 
 func copyResources(projectName, serviceName, environment, temporaryDirectory string) error {
