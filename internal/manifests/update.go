@@ -28,6 +28,7 @@ import (
 )
 
 const packagedChartDirectory = "build/packages/helm"
+var namespaceTruncations = [1] string {"-deployment"}
 
 // Update the manifests
 func Update(projectName, serviceName string) error {
@@ -98,7 +99,7 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	packagedChartFilename := packagedChartDirectoryEntries[len(packagedChartDirectoryEntries) - 1].Name()
 
 	chartArgument := fmt.Sprintf("build/packages/helm/%s", packagedChartFilename)
-	namespaceArgument := fmt.Sprintf("--namespace=%s-%s", strings.ReplaceAll(projectName, "-deployment", ""), environment)
+	namespaceArgument := fmt.Sprintf("--namespace=%s-%s", getNamespace(projectName), environment)
 	outputDirectoryArgument := fmt.Sprintf("--output-dir=%s", temporaryDirectory)
 	valuesArgument := fmt.Sprintf("environments/%s/values.yaml", environment)
 
@@ -108,6 +109,18 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	}
 
 	return nil
+}
+
+func getNamespace(projectName string) string {
+	namespace := projectName
+	for _, namespaceTruncation := range namespaceTruncations {
+		namespace = strings.ReplaceAll(namespace, namespaceTruncation, "")
+	}
+	lastSlashIndex := strings.LastIndex(namespace, "/")
+	if lastSlashIndex != -1 {
+		namespace = namespace[lastSlashIndex + 1:len(namespace)]
+	}
+	return namespace
 }
 
 func copyResources(projectName, serviceName, environment, temporaryDirectory string) error {
