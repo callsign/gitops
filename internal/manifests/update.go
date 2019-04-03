@@ -138,5 +138,7 @@ func copyResources(projectName, serviceName, environment, temporaryDirectory str
 	source, _ := filepath.Abs(path.Join(temporaryDirectory, serviceName, "templates"))
 	destination := path.Join(projectPath, "manifests", environment, serviceName)
 
+	_ = os.RemoveAll(destination)
+
 	return directory.Copy(source, destination)
 }
