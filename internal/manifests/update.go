@@ -24,6 +24,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 const packagedChartDirectory = "build/packages/helm"
@@ -97,7 +98,7 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	packagedChartFilename := packagedChartDirectoryEntries[len(packagedChartDirectoryEntries) - 1].Name()
 
 	chartArgument := fmt.Sprintf("build/packages/helm/%s", packagedChartFilename)
-	namespaceArgument := fmt.Sprintf("--namespace=%s-%s", projectName, environment)
+	namespaceArgument := fmt.Sprintf("--namespace=%s-%s", strings.ReplaceAll(projectName, "-deployment", ""), environment)
 	outputDirectoryArgument := fmt.Sprintf("--output-dir=%s", temporaryDirectory)
 	valuesArgument := fmt.Sprintf("environments/%s/values.yaml", environment)
 

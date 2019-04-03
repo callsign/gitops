@@ -78,6 +78,10 @@ func Test_Update(t *testing.T) {
 		projectName:   "manifests-copy-error",
 		serviceName:   "test",
 		expectedError: fmt.Errorf("Cannot copy manifests: *"),
+	}, {
+		name:        "should not include deployment in namespace",
+		projectName: "not-include-deployment",
+		serviceName: "test",
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
