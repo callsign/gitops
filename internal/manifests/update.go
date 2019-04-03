@@ -26,6 +26,8 @@ import (
 	"path/filepath"
 )
 
+const packagedChartDirectory = "build/packages/helm"
+
 // Update the manifests
 func Update(projectName, serviceName string) error {
 
@@ -86,11 +88,11 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 
 	var packagedChartDirectoryEntries []os.FileInfo
 	var err error
-	if packagedChartDirectoryEntries, err = ioutil.ReadDir("build/packages/helm"); err != nil {
-		return fmt.Errorf("Cannot read build/packages/helm directory")
+	if packagedChartDirectoryEntries, err = ioutil.ReadDir(packagedChartDirectory); err != nil {
+		return fmt.Errorf("Cannot read %s directory", packagedChartDirectory)
 	}
 	if len(packagedChartDirectoryEntries) == 0 {
-		return fmt.Errorf("Missing packaged chart in build/packages/helm")
+		return fmt.Errorf("Missing packaged chart in %s", packagedChartDirectory)
 	}
 	packagedChartFilename := packagedChartDirectoryEntries[len(packagedChartDirectoryEntries) - 1].Name()
 
@@ -103,6 +105,7 @@ func executeHelmTemplate(projectName, environment, temporaryDirectory string) er
 	if output, err := command.CombinedOutput(); err != nil {
 		return fmt.Errorf("%s", output)
 	}
+
 	return nil
 }
 

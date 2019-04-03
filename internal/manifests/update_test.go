@@ -90,7 +90,7 @@ func Test_Update(t *testing.T) {
 				if test.projectName == "project-directory-is-a-file" {
 					emptyFile, _ := os.Create(projectName)
 					emptyFile.Close()
-				} else if test.projectName == "resources-copy-error" {
+				} else if test.projectName == "manifests-copy-error" {
 					os.MkdirAll(projectName, 0555)
 				} else if test.projectName != "project-directory-does-not-exist" {
 					os.MkdirAll(projectName, 0755)
