@@ -93,7 +93,7 @@ func getChartPath(projectName string) (string, error) {
 		return "", fmt.Errorf("Cannot read charts directory")
 	}
 
-	if len(chartParentEntries) == 0 {
+	if len(chartParentEntries) == 0 || !chartParentEntries[0].IsDir() {
 		return "", fmt.Errorf("Missing chart")
 	}
 
