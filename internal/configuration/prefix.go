@@ -39,46 +39,35 @@ func prefix(projectName, serviceName string) error {
 		return err
 	}
 	for _, environmentEntry := range environmentEntries {
-		environmentPath := path.Join(configurationPath, environmentEntry.Name())
+	    filePath := path.Join(configurationPath, environmentEntry.Name(), "values.yaml")
+        if _, err := os.Stat(filePath); err != nil {
+            continue
+        }
 
-		var files []string
-		filepath.Walk(environmentPath, func(path string, file os.FileInfo, _ error) error {
-			if !file.IsDir() {
-				if filepath.Ext(path) == ".yaml" {
-					files = append(files, file.Name())
-				}
-			}
-			return nil
-		})
+		var fileBytes []byte
+		var err error
+		if fileBytes, err = ioutil.ReadFile(filePath); err != nil {
+			return fmt.Errorf("Cannot read configuration file (%s)", filePath)
+		}
 
-		for _, file := range files {
-			filePath := path.Join(environmentPath, file)
+		fileContent := make(map[interface{}]interface{})
+		if err = yaml.Unmarshal([]byte(fileBytes), &fileContent); err != nil {
+			return fmt.Errorf("Invalid YAML (%s)", filePath)
+		}
 
-			var fileBytes []byte
-			var err error
-			if fileBytes, err = ioutil.ReadFile(filePath); err != nil {
-				return fmt.Errorf("Cannot read configuration file (%s)", filePath)
-			}
+		if len(fileContent) == 0 {
+			continue;
+		}
 
-			fileContent := make(map[interface{}]interface{})
-			if err = yaml.Unmarshal([]byte(fileBytes), &fileContent); err != nil {
-				return fmt.Errorf("Invalid YAML (%s)", filePath)
-			}
+		updatedEntryContent := make(map[interface{}]interface{})
+		updatedEntryContent[serviceName] = fileContent
 
-			if len(fileContent) == 0 {
-				continue;
-			}
+		if fileBytes, err = yaml.Marshal(&updatedEntryContent); err != nil {
+			return fmt.Errorf("Cannot marshal updated configuration file (%s)", filePath)
+		}
 
-			updatedEntryContent := make(map[interface{}]interface{})
-			updatedEntryContent[serviceName] = fileContent
-
-			if fileBytes, err = yaml.Marshal(&updatedEntryContent); err != nil {
-				return fmt.Errorf("Cannot marshal updated configuration file (%s)", filePath)
-			}
-
-			if err = ioutil.WriteFile(filePath, fileBytes, 0644); err != nil {
-				return fmt.Errorf("Cannot write updated configuration file (%s)", filePath)
-			}
+		if err = ioutil.WriteFile(filePath, fileBytes, 0644); err != nil {
+			return fmt.Errorf("Cannot write updated configuration file (%s)", filePath)
 		}
 	}
 	return nil

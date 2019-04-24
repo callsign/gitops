@@ -85,8 +85,8 @@ func Test_Update(t *testing.T) {
 		serviceName:               "service",
 		expectedConfigurationFile: "expected-configuration-file.yaml",
 	}, {
-		name:                      "should ignore non yaml files and directories",
-		configurationPath:         "ignore-non-yaml-files-and-directories",
+		name:                      "should ignore non values.yaml files and directories",
+		configurationPath:         "ignore-non-values-yaml-files-and-directories",
 		serviceName:               "service",
 		expectedConfigurationFile: "expected-configuration-file.yaml",
 	}}
